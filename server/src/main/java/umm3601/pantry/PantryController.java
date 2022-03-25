@@ -72,7 +72,7 @@ public class PantryController {
    * @param ctx a Javalin HTTP context
    */
   public void getAllProductsInPantry(Context ctx) {
-    ArrayList<PantryItem> pantryItems = pantryCollection
+    List<PantryItem> pantryItems = pantryCollection
         .find()
         .into(new ArrayList<>());
 
@@ -87,9 +87,12 @@ public class PantryController {
     // Checks if any product is null, which means that
     // at least one product was not in the database
     if (products.stream().anyMatch(Objects::isNull)) {
-      throw new NotFoundResponse("There are products(s) in the pantry could not be found.");
+      throw new NotFoundResponse("There are products(s) in the pantry that could not be found.");
     } else {
-      ctx.json(products);
+      List<Object> all = new ArrayList<>();
+      all.add(pantryItems);
+      all.add(products);
+      ctx.json(all);
     }
 
   }

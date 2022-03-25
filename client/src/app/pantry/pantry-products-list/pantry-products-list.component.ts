@@ -3,6 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 import { Product, ProductCategory } from 'src/app/products/product';
 import { PantryService } from '../pantry.service';
+import { PantryItem } from '../pantryItem';
 
 @Component({
   selector: 'app-pantry-products-list',
@@ -10,8 +11,11 @@ import { PantryService } from '../pantry.service';
   styleUrls: ['./pantry-products-list.component.scss']
 })
 export class PantryProductsListComponent implements OnInit {
-  // Unfiltered product list
+  // Unfiltered list of referenced products
   public allProducts: Product[];
+
+  // Unfiltered list of pantry items
+  public allPantryItems: PantryItem[];
 
   public name: string;
   public productBrand: string;
@@ -40,11 +44,12 @@ export class PantryProductsListComponent implements OnInit {
   getPantryItemsFromServer() {
     this.pantryService.getPantryItems().subscribe(returnedPantryProducts => {
 
-      this.allProducts = returnedPantryProducts;
+      this.allPantryItems = returnedPantryProducts[0];
+      this.allProducts = returnedPantryProducts[1];
     }, err => {
-      // If there was an error getting the users, log
+      // If there was an error getting the products or pantryItems, log
       // the problem and display a message.
-      console.error('We couldn\'t get the list of todos; the server might be down');
+      console.error('We couldn\'t get the a list of products or pantry items; the server might be down');
       this.snackBar.open(
         'Problem contacting the server – try again',
         'OK',

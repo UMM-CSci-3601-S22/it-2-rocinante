@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -10,8 +11,8 @@ export class PantryService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getPantryItems(): Observable<Product[]> {
-    return this.httpClient.get<Product[]>(this.pantryUrl, {
+  getPantryItems(): Observable<any[]> {
+    return this.httpClient.get<any[]>(this.pantryUrl, {
     });
   }
 

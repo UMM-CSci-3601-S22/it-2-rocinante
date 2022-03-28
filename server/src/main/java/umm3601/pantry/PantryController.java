@@ -89,9 +89,11 @@ public class PantryController {
     if (products.stream().anyMatch(Objects::isNull)) {
       throw new NotFoundResponse("There are products(s) in the pantry that could not be found.");
     } else {
-      List<Object> all = new ArrayList<>();
-      all.add(pantryItems);
-      all.add(products);
+      List<Object> all = new ArrayList<Object>();
+      Object pantryObj = pantryItems;
+      Object productsObj = products;
+      all.add(pantryObj);
+      all.add(productsObj);
       ctx.json(all);
     }
 
@@ -174,21 +176,6 @@ public class PantryController {
               + id
               + "; perhaps illegal ID or an ID for an item not in the pantry?");
     }
-  }
-
-  /**
-   * Returns a JSON list of all the pantry entries in the database
-   *
-   * @param ctx a Javalin HTTP context
-   */
-  public void getPantryInfo(Context ctx) {
-    ArrayList<PantryItem> matchingProducts = pantryCollection
-        .find()
-        .into(new ArrayList<>());
-
-    // Set the JSON body of the response to be the list of products returned by
-    // the database.
-    ctx.json(matchingProducts);
   }
 
 }

@@ -246,16 +246,43 @@ public class PantryControllerSpec {
    *            an array of `PantryItem`s.
    * @return the array of `PantryItem`s from the given `Context`.
    */
-  private PantryItem[] returnedPantryItems(Context ctx) {
+
+  private Object[] returnedList(Context ctx) {
     String result = ctx.resultString();
-    PantryItem[] pantryItems = javalinJackson.fromJsonString(result, PantryItem[].class);
-    return pantryItems;
+    Object[] listObjects = javalinJackson.fromJsonString(result, Object[].class);
+    return listObjects;
   }
 
-  private Product[] returnedProducts(Context ctx) {
-    String result = ctx.resultString();
-    Product[] products = javalinJackson.fromJsonString(result, Product[].class);
-    return products;
+  @SuppressWarnings("unchecked")
+  private List<PantryItem> returnedPantryItems(Context ctx) {
+    Object[] objectList = returnedList(ctx);
+
+    Object pantryObject = objectList[0];
+    List<PantryItem> pantryResult = (List<PantryItem>)pantryObject;
+    /* List<PantryItem> pantryResult = new ArrayList<PantryItem>();
+    if (pantryObject instanceof List<?>) {
+      for (Object o : (List<?>) pantryObject) {
+        pantryResult.add(PantryItem.class.cast(o));
+      }
+    } */
+
+    return pantryResult;
+  }
+
+  @SuppressWarnings("unchecked")
+  private List<Product> returnedProducts(Context ctx) {
+    Object[] objectList = returnedList(ctx);
+
+    Object productObject = objectList[1];
+    List<Product> productResult = (List<Product>)productObject;
+    /* List<Product> productResult = new ArrayList<Product>();
+    if (productObject instanceof List<?>) {
+      for (Object o : (List<?>) productObject) {
+        productResult.add(Product.class.cast(o));
+      }
+    } */
+
+    return productResult;
   }
 
   /**
@@ -313,7 +340,11 @@ public class PantryControllerSpec {
     Context ctx = mockContext(path);
 
     pantryController.getAllProductsInPantry(ctx);
-    Product[] returnedProducts = returnedProducts(ctx);
+    List<Product> productList = returnedProducts(ctx);
+    /* Object[] objArray = returnedList(ctx);
+    Object obj = objArray[1];
+
+    List<Product> productList = ; */
 
     // The response status should be 200, i.e., our request
     // was handled successfully (was OK). This is a named constant in
@@ -321,7 +352,7 @@ public class PantryControllerSpec {
     assertEquals(HttpCode.OK.getStatus(), mockRes.getStatus());
     assertEquals(
         db.getCollection("pantry").countDocuments(),
-        returnedProducts.length);
+        productList.size());
   }
 
   @Test
@@ -483,8 +514,8 @@ public class PantryControllerSpec {
     String path = "api/pantry/info";
     Context ctx = mockContext(path);
 
-    pantryController.getPantryInfo(ctx);
-    PantryItem[] returnedProducts = returnedPantryItems(ctx);
+    pantryController.getAllProductsInPantry(ctx);
+    List<PantryItem> pantryList = returnedPantryItems(ctx);
 
     // The response status should be 200, i.e., our request.append("_id", milksId)
     // was handled successfully (was OK). This is a named constant in
@@ -492,7 +523,7 @@ public class PantryControllerSpec {
     assertEquals(HttpCode.OK.getStatus(), mockRes.getStatus());
     assertEquals(
         db.getCollection("pantry").countDocuments(),
-        returnedProducts.length);
+        pantryList.size());
   }
 
 }

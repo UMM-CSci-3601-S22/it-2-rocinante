@@ -7,7 +7,9 @@ import { Product, ProductCategory } from '../product';
 import { ProductService } from '../product.service';
 import { Subscription } from 'rxjs';
 import { PantryService } from 'src/app/pantry/pantry.service';
+import { FormControl } from '@angular/forms';
 import { PantryItem } from 'src/app/pantry/pantryItem';
+import { MatDatepickerContent } from '@angular/material/datepicker';
 
 
 @Component({
@@ -55,6 +57,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   // Stores the products sorted by their category
   public categoryNameMap = new Map<ProductCategory, Product[]>();
+
+  // temp variables used for adding product to pantry
+  public tempDate: string;
+  public localDate: string = new Date().toDateString();
 
   // temp variables to use for deletion
   public tempId: string;
@@ -163,7 +169,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
     });
   }
 
-  addProductToPantry(id: string): Product {
+  /* addProductToPantry(id: string): Product {
 
     let newPantryItem: PantryItem;
     newPantryItem._id = id;
@@ -181,6 +187,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
       duration: 5000,
     });
     return this.tempDeleted;
-  }
+  } */
 
 }

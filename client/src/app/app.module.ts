@@ -25,6 +25,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 import { HttpClientModule } from '@angular/common/http';
 import { LayoutModule } from '@angular/cdk/layout';
@@ -55,7 +56,8 @@ const MATERIAL_MODULES: any[] = [
   MatRadioModule,
   MatSnackBarModule,
   MatPaginatorModule,
-  MatDialogModule
+  MatDialogModule,
+  MatDatepickerModule
 ];
 
 @NgModule({

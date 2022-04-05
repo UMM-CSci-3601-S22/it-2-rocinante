@@ -168,21 +168,36 @@
                   <!-- Dialog Template -->
                   <ng-template #dialogRefAdd let-mydata>
                     <h1 mat-dialog-title>Add Product To Pantry</h1>
+
+                    <div mat-dialog-content>
+                      <h4>Putting <i>{{tempName}}</i> in your pantry...</h4>
+                    </div>
+
                     <p>Please enter the Purchase Date</p>
 
-
+                    <form [formGroup]="addDateForm" (ngSubmit)="addProductToPantry(product._id);" align="center">
                       <mat-form-field appearance="fill">
                         <mat-label>Choose a date</mat-label>
-                        <input matInput [(ngModel)]="tempDate" placeholder="dd/mm/yyyy">
+                        <input matInput [(ngModel)]="tempDate" placeholder="dd/mm/yyyy" formControlName="date" required>
                         <!-- <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                         <mat-datepicker #picker></mat-datepicker> -->
                       </mat-form-field>
 
-                    <div mat-dialog-content>
-                      <h4>Do you want to add <i>{{tempName}}</i> to your pantry?</h4>
-                    </div>
+                      <mat-card-actions>
+                        <button
+                          mat-button
+                          type="button"
+                          color="primary"
+                          [disabled]="!addDateForm.valid"
+                          type="submit"
+                          data-test="confirmDateButton"
+                        >
+                          Add To Pantry
+                        </button>
+                      </mat-card-actions>
+                    </form>
+
                     <div mat-dialog-actions>
-                      <button mat-button color="primary">Add</button>
                       <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>
                     </div>
                   </ng-template>

@@ -7,7 +7,8 @@ import { Product, ProductCategory } from '../product';
 import { ProductService } from '../product.service';
 import { Subscription } from 'rxjs';
 import { PantryService } from 'src/app/pantry/pantry.service';
-import { FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { PantryItem } from 'src/app/pantry/pantryItem';
 import { MatDatepickerContent } from '@angular/material/datepicker';
 
@@ -27,14 +28,18 @@ export class ProductListComponent implements OnInit, OnDestroy {
   @ViewChild('dialogRefAdd')
   dialogRefAdd!: TemplateRef<any>;
 
+  // Stored arrays of products
   public serverFilteredProducts: Product[];
   public filteredProducts: Product[];
 
+  // fields used by input searches
   public name: string;
   public productBrand: string;
   public productCategory: ProductCategory;
   public productStore: string;
   public productLimit: number;
+
+  // Store subscription from getProducts
   getProductsSub: Subscription;
   getUnfilteredProductsSub: Subscription;
 
@@ -58,19 +63,31 @@ export class ProductListComponent implements OnInit, OnDestroy {
   // Stores the products sorted by their category
   public categoryNameMap = new Map<ProductCategory, Product[]>();
 
-  // temp variables used for adding product to pantry
+  // variables used for adding product to pantry
   public tempDate: string;
   public localDate: string = new Date().toDateString();
+  addDateForm: FormGroup;
+  dateValidationMessages = {
+
+    date: [
+      {type: 'required', message: 'Product category is required'},
+      {type: 'pattern', message: 'Date must be of form "dd/mm/yyyy"'},
+    ]
+  };
 
   // temp variables to use for deletion
   public tempId: string;
   public tempName: string;
   public tempDialog: any;
   public tempDeleted: Product;
+
+
   constructor(private productService: ProductService,
     private snackBar: MatSnackBar,
     public dialog: MatDialog,
-    private pantryService: PantryService) { }
+    private pantryService: PantryService,
+    private fb: FormBuilder,
+    private router: Router) { }
 
   getProductsFromServer(): void {
     this.unsub();
@@ -97,9 +114,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
     for (let givenCategory of this.categories) {
       this.categoryNameMap.set(givenCategory,
         this.productService.filterProducts(this.serverFilteredProducts, { category: givenCategory }));
-
     }
-    console.log(this.categoryNameMap);
   }
 
   openDeleteDialog(pname: string, id: string) {
@@ -161,6 +176,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   openAddDialog(pname: string, id: string) {
     this.tempId = id;
     this.tempName = pname;
+    this.createForm();
     this.tempDialog = this.dialog.open(this.dialogRefAdd, { data: { name: this.tempName, _id: this.tempId } },);
     this.tempDialog.afterClosed().subscribe((res) => {
 
@@ -169,9 +185,18 @@ export class ProductListComponent implements OnInit, OnDestroy {
     });
   }
 
-  /* addProductToPantry(id: string): Product {
+  createForm() {
+    this.addDateForm = this.fb.group({
+      date: new FormControl('', Validators.compose([
+        Validators.required,
+        Validators.pattern('^([0]?[1-9]|[1|2][0-9]|[3][0|1])[./-]([0]?[1-9]|[1][0-2])[./-]([0-9]{4}|[0-9]{2})$')
+      ])),
+    });
+  }
 
-    let newPantryItem: PantryItem;
+  addProductToPantry(id: string): void {
+
+    /* let newPantryItem: PantryItem;
     newPantryItem._id = id;
     newPantryItem.purchaseDate =
     this.pantryService.addPantryItem(newPantryItem).subscribe(
@@ -186,7 +211,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.snackBar.open(`${this.tempDeleted.product_name} deleted`, 'OK', {
       duration: 5000,
     });
-    return this.tempDeleted;
-  } */
+    return this.tempDeleted; */
+  }
 
 }

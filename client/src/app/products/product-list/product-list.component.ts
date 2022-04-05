@@ -6,6 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { Product, ProductCategory } from '../product';
 import { ProductService } from '../product.service';
 import { Subscription } from 'rxjs';
+import { PantryService } from 'src/app/pantry/pantry.service';
+import { PantryItem } from 'src/app/pantry/pantryItem';
 
 
 @Component({
@@ -19,6 +21,9 @@ export class ProductListComponent implements OnInit, OnDestroy {
   // MatDialog
   @ViewChild('dialogRef')
   dialogRef!: TemplateRef<any>;
+
+  @ViewChild('dialogRefAdd')
+  dialogRefAdd!: TemplateRef<any>;
 
   public serverFilteredProducts: Product[];
   public filteredProducts: Product[];
@@ -56,7 +61,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
   public tempName: string;
   public tempDialog: any;
   public tempDeleted: Product;
-  constructor(private productService: ProductService, private snackBar: MatSnackBar, public dialog: MatDialog) { }
+  constructor(private productService: ProductService,
+    private snackBar: MatSnackBar,
+    public dialog: MatDialog,
+    private pantryService: PantryService) { }
 
   getProductsFromServer(): void {
     this.unsub();
@@ -130,6 +138,37 @@ export class ProductListComponent implements OnInit, OnDestroy {
   // Removes the product and updates the categoryNameMap to reflect the deletion
   removeProduct(id: string): Product {
     this.productService.deleteProduct(id).subscribe(
+      prod => {
+        this.serverFilteredProducts = this.serverFilteredProducts.filter(product => product._id !== id);
+        this.tempDeleted = prod;
+        this.updateFilter();
+        this.initializeCategoryMap();
+      }
+    );
+    this.tempDialog.close();
+    this.snackBar.open(`${this.tempDeleted.product_name} deleted`, 'OK', {
+      duration: 5000,
+    });
+    return this.tempDeleted;
+  }
+
+  openAddDialog(pname: string, id: string) {
+    this.tempId = id;
+    this.tempName = pname;
+    this.tempDialog = this.dialog.open(this.dialogRefAdd, { data: { name: this.tempName, _id: this.tempId } },);
+    this.tempDialog.afterClosed().subscribe((res) => {
+
+      // Data back from dialog
+      console.log({ res });
+    });
+  }
+
+  addProductToPantry(id: string): Product {
+
+    let newPantryItem: PantryItem;
+    newPantryItem._id = id;
+    newPantryItem.purchaseDate =
+    this.pantryService.addPantryItem(newPantryItem).subscribe(
       prod => {
         this.serverFilteredProducts = this.serverFilteredProducts.filter(product => product._id !== id);
         this.tempDeleted = prod;

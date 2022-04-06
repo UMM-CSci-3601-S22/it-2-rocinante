@@ -111,6 +111,63 @@
                 </div>
               </ng-template>
             </div>
+            <!--Add Product to Pantry Button -->
+            <div class="addToPantryContainer">
+              <button mat-icon-button class="add-toPantry-button" matTooltip="Add To Pantry"
+                matTooltipPosition="left" (click)="openAddDialog(product.product_name, product._id)"
+                data-test="addToPantryButton">
+                <mat-icon aria-label="Add to Pantry">add</mat-icon>
+              </button>
+
+              <!-- Dialog Template -->
+              <ng-template #dialogRefAdd let-mydata>
+                <h1 mat-dialog-title align="center">Add Product To Pantry</h1>
+
+                <div mat-dialog-content>
+                  <h4>Putting <i>{{tempName}}</i> in your pantry...</h4>
+                </div>
+
+                <p>Please enter the Purchase Date</p>
+
+                <form [formGroup]="addDateForm" (ngSubmit)="addProductToPantry(product._id);" align="center">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Choose a date</mat-label>
+                    <input matInput [(ngModel)]="tempDate" placeholder="dd/mm/yyyy" formControlName="date" required>
+                    <button mat-button matSuffix
+                            type="button"
+                            color="primary"
+                            data-test="defaultDateButton"
+                            (click)="defaultDate();"
+                            style="white-space: normal;
+                            word-wrap: break-word;"
+                            >
+                      Use Todays Date
+                    </button>
+                  </mat-form-field>
+
+                  <!-- <mat-card-actions>
+                  </mat-card-actions> -->
+
+                  <div mat-dialog-actions align="center">
+                    <button
+                      mat-button
+                      type="button"
+                      color="primary"
+                      [disabled]="!addDateForm.valid"
+                      type="submit"
+                      data-test="confirmDateButton"
+                    >
+                      Add Using This date
+                    </button>
+                    <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>
+                  </div>
+                </form>
+
+                <!-- <div mat-dialog-actions align="end">
+                  <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>
+                </div> -->
+              </ng-template>
+            </div>
           </span>
         </mat-nav-list>
       </mat-card-content>
@@ -156,64 +213,62 @@
                     </ng-template>
                   </div>
                   <!--Add Product to Pantry Button -->
-                  <div class="addToPantryContainer" style="position: absolute;">
-                  </div>
+                  <div class="addToPantryContainer">
+                    <button mat-icon-button class="add-toPantry-button" matTooltip="Delete Product"
+                      matTooltipPosition="left" (click)="openAddDialog(product.product_name, product._id)"
+                      data-test="addToPantryButton">
+                      <mat-icon aria-label="Add to Pantry">add</mat-icon>
+                    </button>
 
-                  <button mat-icon-button class="add-toPantry-button" matTooltip="Delete Product"
-                    matTooltipPosition="left" (click)="openAddDialog(product.product_name, product._id)"
-                    data-test="addToPantryButton">
-                    <mat-icon aria-label="Add to Pantry">add</mat-icon>
-                  </button>
+                    <!-- Dialog Template -->
+                    <ng-template #dialogRefAdd let-mydata>
+                      <h1 mat-dialog-title align="center">Add Product To Pantry</h1>
 
-                  <!-- Dialog Template -->
-                  <ng-template #dialogRefAdd let-mydata>
-                    <h1 mat-dialog-title>Add Product To Pantry</h1>
-
-                    <div mat-dialog-content>
-                      <h4>Putting <i>{{tempName}}</i> in your pantry...</h4>
-                    </div>
-
-                    <p>Please enter the Purchase Date</p>
-
-                    <form [formGroup]="addDateForm" (ngSubmit)="addProductToPantry(product._id);" align="center">
-                      <mat-form-field appearance="fill">
-                        <mat-label>Choose a date</mat-label>
-                        <input matInput [(ngModel)]="tempDate" placeholder="dd/mm/yyyy" formControlName="date" required>
-                        <button mat-button matSuffix
-                                type="button"
-                                color="primary"
-                                data-test="defaultDateButton"
-                                (click)="defaultDate();"
-                                style="white-space: normal;
-                                word-wrap: break-word;"
-                                >
-                          Use Todays Date
-                        </button>
-                      </mat-form-field>
-
-                      <!-- <mat-card-actions>
-                      </mat-card-actions> -->
-
-                      <div mat-dialog-actions>
-                        <button
-                          mat-button
-                          type="button"
-                          color="primary"
-                          [disabled]="!addDateForm.valid"
-                          type="submit"
-                          data-test="confirmDateButton"
-                        >
-                          Add Using This date
-                        </button>
-                        <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>
+                      <div mat-dialog-content>
+                        <h4>Putting <i>{{tempName}}</i> in your pantry...</h4>
                       </div>
-                    </form>
 
-                    <!-- <div mat-dialog-actions align="end">
-                      <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>
-                    </div> -->
-                  </ng-template>
+                      <p>Please enter the Purchase Date</p>
 
+                      <form [formGroup]="addDateForm" (ngSubmit)="addProductToPantry(product._id);" align="center">
+                        <mat-form-field appearance="fill">
+                          <mat-label>Choose a date</mat-label>
+                          <input matInput [(ngModel)]="tempDate" placeholder="dd/mm/yyyy" formControlName="date" required>
+                          <button mat-button matSuffix
+                                  type="button"
+                                  color="primary"
+                                  data-test="defaultDateButton"
+                                  (click)="defaultDate();"
+                                  style="white-space: normal;
+                                  word-wrap: break-word;"
+                                  >
+                            Use Todays Date
+                          </button>
+                        </mat-form-field>
+
+                        <!-- <mat-card-actions>
+                        </mat-card-actions> -->
+
+                        <div mat-dialog-actions align="center">
+                          <button
+                            mat-button
+                            type="button"
+                            color="primary"
+                            [disabled]="!addDateForm.valid"
+                            type="submit"
+                            data-test="confirmDateButton"
+                          >
+                            Add Using This date
+                          </button>
+                          <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>
+                        </div>
+                      </form>
+
+                      <!-- <div mat-dialog-actions align="end">
+                        <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>
+                      </div> -->
+                    </ng-template>
+                  </div>
                 </div>
               </span>
             </mat-nav-list>

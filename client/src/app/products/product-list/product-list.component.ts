@@ -10,8 +10,6 @@ import { PantryService } from 'src/app/pantry/pantry.service';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PantryItem } from 'src/app/pantry/pantryItem';
-import { MatDatepickerContent } from '@angular/material/datepicker';
-
 
 @Component({
   selector: 'app-product-list-component',

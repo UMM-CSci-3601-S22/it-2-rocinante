@@ -65,7 +65,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   // variables used for adding product to pantry
   public tempDate: string;
-  public localDate: string = new Date().toDateString();
   addDateForm: FormGroup;
   dateValidationMessages = {
 
@@ -127,8 +126,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
       console.log({ res });
     });
   }
-
-
 
   public updateFilter(): void {
     this.filteredProducts = this.productService.filterProducts(
@@ -194,7 +191,28 @@ export class ProductListComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Getting the client machines current date, converting to dd/mm/yyyy and setting it as tempDate
+  defaultDate(): string {
+    let localDate: Date;
+    localDate = new Date();
+    let dd = String(localDate.getDate());
+    let mm = String(localDate.getMonth() + 1);
+    const yyyy = String(localDate.getFullYear());
+
+    if (localDate.getDate() < 10) {
+      dd = '0' + dd;
+    }
+    if (localDate.getMonth()+1 < 10) {
+      mm = '0' + mm;
+    }
+
+    this.tempDate = dd + '/' + mm + '/' + yyyy;
+    return this.tempDate;
+
+  }
+
   addProductToPantry(id: string): void {
+    this.tempDate = '';
 
     /* let newPantryItem: PantryItem;
     newPantryItem._id = id;

@@ -76,15 +76,15 @@ describe('ProductListComponent', () => {
   });
 
   it('contains a product named \'banana\'', () => {
-    expect(productList.serverFilteredProducts.some((product: Product) => product.product_name === 'banana')).toBe(true);
+    expect(productList.serverFilteredProducts.some((product: Product) => product.productName === 'banana')).toBe(true);
   });
 
   it('contain a product named \'Wheat Bread\'', () => {
-    expect(productList.serverFilteredProducts.some((product: Product) => product.product_name === 'Wheat Bread')).toBe(true);
+    expect(productList.serverFilteredProducts.some((product: Product) => product.productName === 'Wheat Bread')).toBe(true);
   });
 
   it('doesn\'t contain a product named \'Santa\'', () => {
-    expect(productList.serverFilteredProducts.some((product: Product) => product.product_name === 'Santa')).toBe(false);
+    expect(productList.serverFilteredProducts.some((product: Product) => product.productName === 'Santa')).toBe(false);
   });
 
   it('has one product that is dairy', () => {
@@ -95,7 +95,25 @@ describe('ProductListComponent', () => {
     productList.productCategory = 'produce';
     productList.productBrand = 'Dole';
     productList.getProductsFromServer();
-    expect(productList.filteredProducts.some((product: Product) => product.product_name === 'banana')).toBe(true);
+    expect(productList.filteredProducts.some((product: Product) => product.productName === 'banana')).toBe(true);
+  });
+
+  it('should fill in categoryNameMap with brand key to array of product objects value', () => {
+    expect(productList.categoryNameMap.get('produce'))
+    .toEqual([{
+      _id: 'banana_id',
+      productName: 'banana',
+      description: '',
+      brand: 'Dole',
+      category: 'produce',
+      store: 'Walmart',
+      location: '',
+      notes: '',
+      tags: [],
+      lifespan: 0,
+      threshold: 0,
+      image: ''
+    }]);
   });
 
 });
@@ -125,23 +143,11 @@ describe('Delete From ProductList', () => {
     });
   }));
 
-  it('should call openDeleteDialog and call removeProduct', () => {
-    productList.allProducts = productList.serverFilteredProducts;
-    productList.filteredProducts = productList.serverFilteredProducts;
-    productList.bakeryProducts = productList.serverFilteredProducts;
-    productList.produceProducts = productList.serverFilteredProducts;
-    productList.meatProducts = productList.serverFilteredProducts;
-    productList.dairyProducts = productList.serverFilteredProducts;
-    productList.frozenProducts = productList.serverFilteredProducts;
-    productList.cannedProducts = productList.serverFilteredProducts;
-    productList.drinkProducts = productList.serverFilteredProducts;
-    productList.generalProducts = productList.serverFilteredProducts;
-    productList.miscellaneousProducts = productList.serverFilteredProducts;
-    productList.seasonalProducts = productList.serverFilteredProducts;
+  it('should call openDeleteDialog, call removeProduct and delete the product', () => {
     productList.openDeleteDialog('banana', 'banana_id');
     fixture.detectChanges();
     productList.removeProduct('banana_id');
-    expect(productList.produceProducts.length).toBe(2);
+    expect(productList.serverFilteredProducts.length).toBe(2);
   });
 
 });

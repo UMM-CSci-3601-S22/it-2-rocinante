@@ -3,22 +3,22 @@
   <div fxFlex fxFlex.gt-sm="80" fxFlexOffset.gt-sm="10">
 
     <mat-card class="search-card">
-      <mat-card-title class="user-list-title">Products</mat-card-title>
-      <mat-card-content fxLayout="column">
+      <mat-card-title class="product-list-title">Products</mat-card-title>
+      <mat-card-content fxLayout="column" >
 
         <!-- Form Field Container -->
         <div fxLayout="row wrap" fxLayoutGap="15px" style="margin-right: 15px;">
           <mat-form-field class="input-field">
             <mat-label>Product Name</mat-label>
-            <input matInput data-test="product_nameInput" placeholder="Filter products by name" [(ngModel)]="name"
-              (input)="updateFilter()">
+            <input matInput data-test="productNameInput" placeholder="Filter products by name"
+            [(ngModel)]="name" (input)="updateFilter()">
             <mat-hint>Filtered on client</mat-hint>
           </mat-form-field>
 
           <mat-form-field class="input-field">
             <mat-label>Brand</mat-label>
-            <input matInput data-test="productBrandInput" placeholder="Filter products by brand"
-              [(ngModel)]="productBrand" (input)="updateFilter()">
+            <input matInput id="product-brand-input" placeholder="Filter products by brand"
+            [(ngModel)]="productBrand" (input)="updateFilter()">
             <mat-hint>Filtered on client</mat-hint>
           </mat-form-field>
         </div>
@@ -48,6 +48,7 @@
               <mat-option value="frozen foods">Frozen Foods</mat-option>
               <mat-option value="canned goods">Canned Goods</mat-option>
               <mat-option value="drinks">Drinks</mat-option>
+              <mat-option value="general grocery">General Grocery</mat-option>
               <mat-option value="miscellaneous">Miscellaneous</mat-option>
               <mat-option value="seasonal">Seasonal</mat-option>
             </mat-select>
@@ -85,9 +86,9 @@
     <mat-card *ngIf="activeFilters" class="conditional-product-list">
       <mat-card-content>
         <mat-nav-list class="filtered-product-nav-list">
-          <span fxLayout="row" *ngFor="let product of this.filteredProducts">
+          <span fxLayout="row" *ngFor="let product of this.filteredProducts" class="product-item-container">
             <a mat-list-item [routerLink]="['/products', product._id]" class="filtered-product-list-item">
-              <p matLine class="product-list-name"> {{product.product_name}} </p>
+              <p matLine class="product-list-name"> {{product.productName}} </p>
               <p matLine class="product-list-brand"> {{product.brand}} </p>
               <p matLine class="product-list-category"> {{product.category}} </p>
               <p matLine class="product-list-store"> {{product.store}} </p>
@@ -95,7 +96,7 @@
             </a>
             <div class="deleteContainer" style="position: absolute;">
               <button mat-icon-button class="delete-product-button" matTooltip="Delete Product"
-                matTooltipPosition="left" (click)="openDeleteDialog(product.product_name, product._id)"
+                matTooltipPosition="left" (click)="openDeleteDialog(product.productName, product._id)"
                 data-test="deleteProductButton">
                 <mat-icon aria-label="Delete Product">close</mat-icon>
               </button>
@@ -114,7 +115,7 @@
             <!--Add Product to Pantry Button -->
             <div class="addToPantryContainer">
               <button mat-icon-button class="add-toPantry-button" matTooltip="Add To Pantry"
-                matTooltipPosition="left" (click)="openAddDialog(product.product_name, product._id)"
+                matTooltipPosition="left" (click)="openAddDialog(product.productName, product._id)"
                 data-test="addToPantryButton">
                 <mat-icon aria-label="Add to Pantry">add</mat-icon>
               </button>
@@ -179,15 +180,15 @@
         <mat-accordion>
           <mat-expansion-panel *ngFor="let productCategory of (this.categoryNameMap | keyvalue)">
             <mat-expansion-panel-header>
-              <mat-panel-title class="capitalize expanse-panel-name">
+              <mat-panel-title [ngClass]="productCategory.key.replace(' ', '-') + '-panel-title capitalize'">
                 {{ productCategory.key }}
               </mat-panel-title>
             </mat-expansion-panel-header>
 
-            <mat-nav-list class="category-nav-list">
+            <mat-nav-list [ngClass]="productCategory.key.replace(' ', '-') + '-nav-list'">
               <span fxLayout="row" *ngFor="let product of productCategory.value">
                 <a mat-list-item [routerLink]="['/products', product._id]" class="product-list-item">
-                  <p matLine class="product-list-name"> {{product.product_name}} </p>
+                  <p matLine class="product-list-name"> {{product.productName}} </p>
                   <p matLine class="product-list-brand"> {{product.brand}} </p>
                   <p matLine class="product-list-category"> {{product.category}} </p>
                   <p matLine class="product-list-store"> {{product.store}} </p>
@@ -196,7 +197,7 @@
                 <div style="display: flex;">
                   <div class="deleteContainer">
                     <button mat-icon-button class="delete-product-button" matTooltip="Delete Product"
-                      matTooltipPosition="left" (click)="openDeleteDialog(product.product_name, product._id)"
+                      matTooltipPosition="left" (click)="openDeleteDialog(product.productName, product._id)"
                       data-test="deleteProductButton">
                       <mat-icon aria-label="Delete Product">close</mat-icon>
                     </button>
@@ -215,7 +216,7 @@
                   <!--Add Product to Pantry Button -->
                   <div class="addToPantryContainer">
                     <button mat-icon-button class="add-toPantry-button" matTooltip="Delete Product"
-                      matTooltipPosition="left" (click)="openAddDialog(product.product_name, product._id)"
+                      matTooltipPosition="left" (click)="openAddDialog(product.productName, product._id)"
                       data-test="addToPantryButton">
                       <mat-icon aria-label="Add to Pantry">add</mat-icon>
                     </button>
@@ -275,16 +276,6 @@
 
           </mat-expansion-panel>
         </mat-accordion>
-
-        <!-- <mat-nav-list class="product-nav-list">
-          <h3 mat-subheader>Product List</h3>
-          <a mat-list-item *ngFor="let product of this.filteredProducts" [routerLink]="['/products', product._id]" class="product-list-item">
-            <h3 matLine class="product-list-name"> {{product.product_name}} </h3>
-            <p matLine class="product-list-category"> {{product.category}} </p>
-            <p matLine class="product-list-brand"> {{product.brand}} </p>
-            <mat-divider></mat-divider>
-          </a>
-        </mat-nav-list> -->
       </mat-card-content>
     </mat-card>
   </div>

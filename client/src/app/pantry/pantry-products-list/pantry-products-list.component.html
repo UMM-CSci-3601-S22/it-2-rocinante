@@ -16,7 +16,7 @@
               <h3 mat-subheader>Pantry Items</h3>
               <a mat-list-item *ngFor="let pitem of this.pantryInfo" [routerLink]="['/product', pitem._id]"
                 class="pantry-list-item" data-test="pantryListItem">
-                <h2 matLine class="product-list-name">{{pitem.purchase_date}}</h2>
+                <h2 matLine class="product-list-name">{{pitem.purchaseDate}}</h2>
                 <h4 matLine class="product-list-category">{{pitem.product}}</h4>
                 <h4 matLine class="product-list-category">{{pitem.notes}}</h4>
               </a>

@@ -25,6 +25,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 import { HttpClientModule } from '@angular/common/http';
 import { LayoutModule } from '@angular/cdk/layout';
@@ -37,6 +38,7 @@ import { ProductCardComponent } from './products/product-card/product-card.compo
 import { PantryService } from './pantry/pantry.service';
 import { EditProductComponent } from './products/edit-product/edit-product.component';
 import { ProductFormComponent } from './products/product-form/product-form.component';
+import { AddProductToPantryComponent } from './products/add-product-to-pantry/add-product-to-pantry.component';
 
 const MATERIAL_MODULES: any[] = [
   MatListModule,
@@ -56,7 +58,8 @@ const MATERIAL_MODULES: any[] = [
   MatRadioModule,
   MatSnackBarModule,
   MatPaginatorModule,
-  MatDialogModule
+  MatDialogModule,
+  MatDatepickerModule
 ];
 
 @NgModule({
@@ -69,6 +72,7 @@ const MATERIAL_MODULES: any[] = [
     ProductCardComponent,
     EditProductComponent,
     ProductFormComponent,
+    AddProductToPantryComponent,
   ],
   imports: [
     BrowserModule,

@@ -27,7 +27,8 @@
         <div fxLayout="row wrap" fxLayoutGap="15px">
           <mat-form-field class="input-field">
             <mat-label>Store</mat-label>
-            <mat-select (selectionChange)="getProductsFromServer()" [(ngModel)]="productStore" data-test="productStoreSelect">
+            <mat-select (selectionChange)="getProductsFromServer()" [(ngModel)]="productStore"
+              data-test="productStoreSelect">
               <mat-option>--</mat-option>
               <mat-option value="Willies">Willies</mat-option>
               <mat-option value="Pomme de Terre">Pomme de Terre </mat-option>
@@ -37,7 +38,8 @@
 
           <mat-form-field class="input-field">
             <mat-label>Category</mat-label>
-            <mat-select (selectionChange)="getProductsFromServer()" [(ngModel)]="productCategory" data-test="productCategorySelect">
+            <mat-select (selectionChange)="getProductsFromServer()" [(ngModel)]="productCategory"
+              data-test="productCategorySelect">
               <mat-option>--</mat-option>
               <mat-option value="bakery">Bakery</mat-option>
               <mat-option value="produce">Produce</mat-option>
@@ -79,8 +81,9 @@
 
 <!-- Product List ('Bottom' Content) -->
 <div fxLayout="row">
-  <div fxFlex fxFlex.gt-sm="80" fxFlexOffset.gt-sm="10" *ngIf="serverFilteredProducts; else productsError" style="width: 90%;">
-    <mat-card  *ngIf="activeFilters" class="conditional-product-list">
+  <div fxFlex fxFlex.gt-sm="80" fxFlexOffset.gt-sm="10" *ngIf="serverFilteredProducts; else productsError"
+    style="width: 90%;">
+    <mat-card *ngIf="activeFilters" class="conditional-product-list">
       <mat-card-content>
         <mat-nav-list class="filtered-product-nav-list">
           <span fxLayout="row" *ngFor="let product of this.filteredProducts" class="product-item-container">
@@ -91,25 +94,80 @@
               <p matLine class="product-list-store"> {{product.store}} </p>
               <mat-divider></mat-divider>
             </a>
-            <div class="delete-container" style="position: absolute;">
-              <button mat-icon-button class="delete-product-button"
-                                      matTooltip="Delete Product"
-                                      matTooltipPosition="left"
-                                      (click)="openDeleteDialog(product.productName, product._id)"
-                                      data-test="deleteProductButton">
+            <div class="deleteContainer" style="position: absolute;">
+              <button mat-icon-button class="delete-product-button" matTooltip="Delete Product"
+                matTooltipPosition="left" (click)="openDeleteDialog(product.productName, product._id)"
+                data-test="deleteProductButton">
                 <mat-icon aria-label="Delete Product">close</mat-icon>
               </button>
               <!-- Dialog Template -->
-            <ng-template #dialogRef let-mydata>
-              <h1 mat-dialog-title>Delete Product?</h1>
-              <div mat-dialog-content>
-                <h4>Are you sure you want to delete <i>{{tempName}}</i>? This action cannot be undone</h4>
-              </div>
-              <div mat-dialog-actions>
-                <button mat-button data-test="dialogDelete" color="warn" (click)="removeProduct(tempId)">Delete</button>
-                <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>
-              </div>
-            </ng-template>
+              <ng-template #dialogRef let-mydata>
+                <h1 mat-dialog-title>Delete Product?</h1>
+                <div mat-dialog-content>
+                  <h4>Are you sure you want to delete <i>{{tempName}}</i>? This action cannot be undone</h4>
+                </div>
+                <div mat-dialog-actions>
+                  <button mat-button color="warn" (click)="removeProduct(tempId)">Delete</button>
+                  <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>
+                </div>
+              </ng-template>
+            </div>
+            <!--Add Product to Pantry Button -->
+            <div class="addToPantryContainer">
+              <button mat-icon-button class="add-toPantry-button" matTooltip="Add To Pantry"
+                matTooltipPosition="left" (click)="openAddDialog(product.productName, product._id)"
+                data-test="addToPantryButton">
+                <mat-icon aria-label="Add to Pantry">add</mat-icon>
+              </button>
+
+              <!-- Dialog Template -->
+              <ng-template #dialogRefAdd let-mydata>
+                <h1 mat-dialog-title align="center">Add Product To Pantry</h1>
+
+                <div mat-dialog-content>
+                  <h4>Putting <i>{{tempName}}</i> in your pantry...</h4>
+                </div>
+
+                <p>Please enter the Purchase Date</p>
+
+                <form [formGroup]="addDateForm" (ngSubmit)="addProductToPantry(product._id);" align="center">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Choose a date</mat-label>
+                    <input matInput [(ngModel)]="tempDate" placeholder="dd/mm/yyyy" formControlName="date" required>
+                    <button mat-button matSuffix
+                            type="button"
+                            color="primary"
+                            data-test="defaultDateButton"
+                            (click)="defaultDate();"
+                            style="white-space: normal;
+                            word-wrap: break-word;"
+                            >
+                      Use Todays Date
+                    </button>
+                  </mat-form-field>
+
+                  <!-- <mat-card-actions>
+                  </mat-card-actions> -->
+
+                  <div mat-dialog-actions align="center">
+                    <button
+                      mat-button
+                      type="button"
+                      color="primary"
+                      [disabled]="!addDateForm.valid"
+                      type="submit"
+                      data-test="confirmDateButton"
+                    >
+                      Add Using This date
+                    </button>
+                    <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>
+                  </div>
+                </form>
+
+                <!-- <div mat-dialog-actions align="end">
+                  <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>
+                </div> -->
+              </ng-template>
             </div>
           </span>
         </mat-nav-list>
@@ -120,8 +178,7 @@
     <mat-card class="expansion-product-panels">
       <mat-card-content>
         <mat-accordion>
-          <mat-expansion-panel *ngFor="let productCategory of (this.categoryNameMap | keyvalue)"
-                               [ngClass]="productCategory.key.replace(' ', '-') + '-expansion-panel'">
+          <mat-expansion-panel *ngFor="let productCategory of (this.categoryNameMap | keyvalue)">
             <mat-expansion-panel-header>
               <mat-panel-title [ngClass]="productCategory.key.replace(' ', '-') + '-panel-title capitalize'">
                 {{ productCategory.key }}
@@ -137,25 +194,82 @@
                   <p matLine class="product-list-store"> {{product.store}} </p>
                   <mat-divider></mat-divider>
                 </a>
-                <div class="deleteContainer" style="position: absolute;">
-                  <button mat-icon-button class="delete-product-button"
-                                          matTooltip="Delete Product"
-                                          matTooltipPosition="left"
-                                          (click)="openDeleteDialog(product.productName, product._id)"
-                                          data-test="deleteProductButton">
-                    <mat-icon aria-label="Delete Product">close</mat-icon>
-                  </button>
-                  <!-- Dialog Template -->
-                <ng-template #dialogRef let-mydata data-test="deletePopUp">
-                  <h1 mat-dialog-title>Delete Product?</h1>
-                  <div mat-dialog-content>
-                    <h4>Are you sure you want to delete <i>{{tempName}}</i>? This action cannot be undone</h4>
+                <div style="display: flex;">
+                  <div class="deleteContainer">
+                    <button mat-icon-button class="delete-product-button" matTooltip="Delete Product"
+                      matTooltipPosition="left" (click)="openDeleteDialog(product.productName, product._id)"
+                      data-test="deleteProductButton">
+                      <mat-icon aria-label="Delete Product">close</mat-icon>
+                    </button>
+                    <!-- Dialog Template -->
+                    <ng-template #dialogRef let-mydata>
+                      <h1 mat-dialog-title>Delete Product?</h1>
+                      <div mat-dialog-content>
+                        <h4>Are you sure you want to delete <i>{{tempName}}</i>? This action cannot be undone</h4>
+                      </div>
+                      <div mat-dialog-actions>
+                        <button mat-button color="warn" (click)="removeProduct(tempId)">Delete</button>
+                        <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>
+                      </div>
+                    </ng-template>
                   </div>
-                  <div mat-dialog-actions>
-                    <button mat-button color="warn" data-test="deleteButtonInPopUp" (click)="removeProduct(tempId)">Delete</button>
-                    <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>
+                  <!--Add Product to Pantry Button -->
+                  <div class="addToPantryContainer">
+                    <button mat-icon-button class="add-toPantry-button" matTooltip="Delete Product"
+                      matTooltipPosition="left" (click)="openAddDialog(product.productName, product._id)"
+                      data-test="addToPantryButton">
+                      <mat-icon aria-label="Add to Pantry">add</mat-icon>
+                    </button>
+
+                    <!-- Dialog Template -->
+                    <ng-template #dialogRefAdd let-mydata>
+                      <h1 mat-dialog-title align="center">Add Product To Pantry</h1>
+
+                      <div mat-dialog-content>
+                        <h4>Putting <i>{{tempName}}</i> in your pantry...</h4>
+                      </div>
+
+                      <p>Please enter the Purchase Date</p>
+
+                      <form [formGroup]="addDateForm" (ngSubmit)="addProductToPantry(product._id);" align="center">
+                        <mat-form-field appearance="fill">
+                          <mat-label>Choose a date</mat-label>
+                          <input matInput [(ngModel)]="tempDate" placeholder="dd/mm/yyyy" formControlName="date" required>
+                          <button mat-button matSuffix
+                                  type="button"
+                                  color="primary"
+                                  data-test="defaultDateButton"
+                                  (click)="defaultDate();"
+                                  style="white-space: normal;
+                                  word-wrap: break-word;"
+                                  >
+                            Use Todays Date
+                          </button>
+                        </mat-form-field>
+
+                        <!-- <mat-card-actions>
+                        </mat-card-actions> -->
+
+                        <div mat-dialog-actions align="center">
+                          <button
+                            mat-button
+                            type="button"
+                            color="primary"
+                            [disabled]="!addDateForm.valid"
+                            type="submit"
+                            data-test="confirmDateButton"
+                          >
+                            Add Using This date
+                          </button>
+                          <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>
+                        </div>
+                      </form>
+
+                      <!-- <div mat-dialog-actions align="end">
+                        <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>
+                      </div> -->
+                    </ng-template>
                   </div>
-                </ng-template>
                 </div>
               </span>
             </mat-nav-list>
@@ -181,6 +295,7 @@
 </div>
 
 <!-- Add Product Button -->
-<button mat-fab class="add-product-fab" matTooltip="Add Product" matTooltipPosition="left" routerLink="/products/new" data-test="addProductButton">
+<button mat-fab class="add-product-fab" matTooltip="Add Product" matTooltipPosition="left" routerLink="/products/new"
+  data-test="addProductButton">
   <mat-icon class="md-24" aria-label="Add Product">add</mat-icon>
 </button>

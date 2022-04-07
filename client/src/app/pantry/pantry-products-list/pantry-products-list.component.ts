@@ -65,8 +65,8 @@ export class PantryProductsListComponent implements OnInit {
       this.pantryInfo = returnedPantry;
       this.createComboMapToArray();
       this.pantryInfo.sort((a, b) => {
-        const dateA = a.purchase_date.toLowerCase();
-        const dateB = b.purchase_date.toLowerCase();
+        const dateA = a.purchaseDate.toLowerCase();
+        const dateB = b.purchaseDate.toLowerCase();
         return dateA > dateB ? 1 : -1;
       });
       this.createUniquePantry();

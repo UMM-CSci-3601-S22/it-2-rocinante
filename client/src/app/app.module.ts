@@ -7,7 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
-import {MatButtonModule} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,18 +20,24 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
-import {MatDividerModule} from '@angular/material/divider';
-import {MatRadioModule} from '@angular/material/radio';
-import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
 
-import { UserListComponent } from './users/user-list.component';
-import { HomeComponent } from './home/home.component';
-import { UserService } from './users/user.service';
 import { HttpClientModule } from '@angular/common/http';
 import { LayoutModule } from '@angular/cdk/layout';
-import { UserCardComponent } from './users/user-card.component';
-import { UserProfileComponent } from './users/user-profile.component';
-import { AddUserComponent } from './users/add-user.component';
+import { ProductListComponent } from './products/product-list/product-list.component';
+import { ProductService } from './products/product.service';
+import { SingleProductPageComponent } from './products/single-product-page/single-product-page.component';
+import { AddProductComponent } from './products/add-product/add-product.component';
+import { PantryProductsListComponent } from './pantry/pantry-products-list/pantry-products-list.component';
+import { ProductCardComponent } from './products/product-card/product-card.component';
+import { PantryService } from './pantry/pantry.service';
+import { EditProductComponent } from './products/edit-product/edit-product.component';
+import { ProductFormComponent } from './products/product-form/product-form.component';
 
 const MATERIAL_MODULES: any[] = [
   MatListModule,
@@ -49,17 +55,22 @@ const MATERIAL_MODULES: any[] = [
   MatFormFieldModule,
   MatDividerModule,
   MatRadioModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatPaginatorModule,
+  MatDialogModule,
+  MatTableModule
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
-    UserListComponent,
-    UserCardComponent,
-    UserProfileComponent,
-    AddUserComponent,
+    ProductListComponent,
+    SingleProductPageComponent,
+    AddProductComponent,
+    PantryProductsListComponent,
+    ProductCardComponent,
+    EditProductComponent,
+    ProductFormComponent,
   ],
   imports: [
     BrowserModule,
@@ -73,7 +84,8 @@ const MATERIAL_MODULES: any[] = [
     LayoutModule,
   ],
   providers: [
-    UserService
+    ProductService,
+    PantryService
   ],
   bootstrap: [AppComponent]
 })

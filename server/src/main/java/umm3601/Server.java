@@ -13,7 +13,8 @@ import org.bson.UuidRepresentation;
 import io.javalin.Javalin;
 import io.javalin.core.util.RouteOverviewPlugin;
 import io.javalin.http.InternalServerErrorResponse;
-import umm3601.user.UserController;
+import umm3601.pantry.PantryController;
+import umm3601.product.ProductController;
 
 public class Server {
 
@@ -27,13 +28,14 @@ public class Server {
     String databaseName = System.getenv().getOrDefault("MONGO_DB", "dev");
 
     // Setup the MongoDB client object with the information we set earlier
-    MongoClient mongoClient
-      = MongoClients.create(MongoClientSettings
+    MongoClient mongoClient = MongoClients.create(MongoClientSettings
         .builder()
         .applyToClusterSettings(builder -> builder.hosts(Arrays.asList(new ServerAddress(mongoAddr))))
-        // Old versions of the mongodb-driver-sync package encoded UUID values (universally unique identifiers) in
+        // Old versions of the mongodb-driver-sync package encoded UUID values
+        // (universally unique identifiers) in
         // a non-standard way. This option says to use the standard encoding.
-        // See: https://studio3t.com/knowledge-base/articles/mongodb-best-practices-uuid-data/
+        // See:
+        // https://studio3t.com/knowledge-base/articles/mongodb-best-practices-uuid-data/
         .uuidRepresentation(UuidRepresentation.STANDARD)
         .build());
 
@@ -41,11 +43,10 @@ public class Server {
     MongoDatabase database = mongoClient.getDatabase(databaseName);
 
     // Initialize dependencies
-    UserController userController = new UserController(database);
+    ProductController productController = new ProductController(database);
+    PantryController pantryController = new PantryController(database);
 
-    Javalin server = Javalin.create(config ->
-      config.registerPlugin(new RouteOverviewPlugin("/api"))
-    );
+    Javalin server = Javalin.create(config -> config.registerPlugin(new RouteOverviewPlugin("/api")));
     /*
      * We want to shut the `mongoClient` down if the server either
      * fails to start, or when it's shutting down for whatever reason.
@@ -61,18 +62,38 @@ public class Server {
 
     server.start(SERVER_PORT);
 
-    // List users, filtered using query parameters
-    server.get("/api/users", userController::getUsers);
+    // List products, filtered using query params
+    server.get("/api/products", productController::getAllProducts);
 
-    // Get the specified user
-    server.get("/api/users/{id}", userController::getUser);
+    // Get the specified product
+    server.get("/api/products/{id}", productController::getProductByID);
 
-    // Delete the specified user
-    server.delete("/api/users/{id}", userController::deleteUser);
+    // List products, filtered using query params
+    server.get("/api/pantry", pantryController::getAllProductsInPantry);
 
-    // Add new user with the user info being in the JSON body
-    // of the HTTP request
-    server.post("/api/users", userController::addNewUser);
+    // List products, filtered using query params
+    server.get("/api/pantry/info", pantryController::getPantryInfo);
+
+    // Get the specified pantry item
+    server.get("/api/pantry/{id}", pantryController::getPantryItemByID);
+
+    // Delete the specified product
+    server.delete("/api/products/{id}", productController::deleteProduct);
+
+    // Delete the specified pantry item
+    server.delete("/api/pantry/{id}", pantryController::deletePantryItem);
+
+    // Add new product with info from JSON body of HTTP request
+    server.post("/api/products", productController::addNewProduct);
+
+    // Add new pantry item with info from JSON body of HTTP request
+    server.post("/api/pantry", pantryController::addNewPantryItem);
+
+    // Add new product with info from JSON body of HTTP request
+    server.post("/api/products/{id}", productController::addNewProduct);
+
+    // Edit a product with a given id
+    server.put("/api/products/{id}", productController::editProduct);
 
     // This catches any uncaught exceptions thrown in the server
     // code and turns them into a 500 response ("Internal Server
@@ -83,8 +104,10 @@ public class Server {
     // certainly want to use a logging library to log all errors
     // caught here so you'd know about them and could try to address
     // them.
+
     server.exception(Exception.class, (e, ctx) -> {
       throw new InternalServerErrorResponse(e.toString());
     });
+
   }
 }

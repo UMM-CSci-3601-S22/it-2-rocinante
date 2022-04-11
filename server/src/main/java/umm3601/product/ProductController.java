@@ -31,11 +31,28 @@ public class ProductController {
   private static final String BRAND_KEY = "brand";
   private static final String CATEGORY_KEY = "category";
   private static final String STORE_KEY = "store";
+  private static final String[] CATEGORY_LIST = {"baked goods",
+                                                  "baking supplies",
+                                                  "beverages",
+                                                  "cleaning products",
+                                                  "dairy",
+                                                  "deli",
+                                                  "frozen foods",
+                                                  "herbs/spices",
+                                                  "meat",
+                                                  "miscellaneous",
+                                                  "paper products",
+                                                  "pet supplies",
+                                                  "produce",
+                                                  "staples",
+                                                  "toiletries"};
+
   // private static final String LOCATION_KEY = "location";
   // private static final String NOTES_KEY = "notes";
   // private static final String TAGS_KEY = "tags";
   // private static final String LIFESPAN_KEY = "lifespan";
   // private static final String THRESHOLD_KEY = "threshold";
+  public Map<String, List<Product>> productCategoryMap;
 
   private final JacksonMongoCollection<Product> productCollection;
 
@@ -74,24 +91,40 @@ public class ProductController {
    * @param ctx a Javalin HTTP context
    */
   public void getAllProducts(Context ctx) {
-    Bson combinedFilter = constructFilter(ctx);
+    productCategoryMap.clear();
+    Bson combinedFilter = constructFilter(ctx, false, "none");
     Bson sortingOrder = constructSortingOrder(ctx);
 
     // All three of the find, sort, and into steps happen "in parallel" inside the
     // database system. So MongoDB is going to find the products with the specified
     // properties, return those sorted in the specified manner, and put the
     // results into an initially empty ArrayList.
-    ArrayList<Product> matchingProducts = productCollection
+    List<Product> matchingProducts = productCollection
         .find(combinedFilter)
         .sort(sortingOrder)
-        .into(new ArrayList<>());
+        .into(new ArrayList<Product>());
 
-    // Set the JSON body of the response to be the list of products returned by
+    if (!ctx.queryParamMap().containsKey(CATEGORY_KEY)) {
+      productCategoryMap.put("all", matchingProducts);
+      for(String Category : CATEGORY_LIST) {
+        List<Product> categoryProducts = productCollection
+          .find(constructFilter(ctx, true, Category))
+          .sort(sortingOrder)
+          .into(new ArrayList<Product>());
+
+        productCategoryMap.put(Category, categoryProducts);
+      }
+
+      ctx.json(productCategoryMap);
+    }
+
+
+    // Set the JSON body of the response to be the map of categories to products returned by
     // the database.
     ctx.json(matchingProducts);
   }
 
-  private Bson constructFilter(Context ctx) {
+  private Bson constructFilter(Context ctx, Boolean Categorize, String Category) {
     List<Bson> filters = new ArrayList<>(); // start with a blank document
 
     if (ctx.queryParamMap().containsKey(PRODUCT_NAME_KEY)) {
@@ -110,6 +143,10 @@ public class ProductController {
 
     if (ctx.queryParamMap().containsKey(CATEGORY_KEY)) {
       filters.add(regex(CATEGORY_KEY, Pattern.quote(ctx.queryParam(CATEGORY_KEY)), "i"));
+    }
+
+    if (!ctx.queryParamMap().containsKey(CATEGORY_KEY) && Categorize) {
+      filters.add(regex(CATEGORY_KEY, Pattern.quote(Category), "i"));
     }
 
     if (ctx.queryParamMap().containsKey(STORE_KEY)) {
